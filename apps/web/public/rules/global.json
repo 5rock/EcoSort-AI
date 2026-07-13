@@ -1,0 +1,28 @@
+{
+  "region": "GLOBAL",
+  "version": "1.0",
+  "rules": [
+    {
+      "category": "Plastic",
+      "bin": "Recycling",
+      "instructions": [
+        "Rinse completely",
+        "Remove caps and labels if possible",
+        "Ensure it is dry"
+      ],
+      "impact": "Recycling plastic saves 80% of energy compared to creating new plastic.",
+      "warnings": [
+        "Do not recycle soft plastics (bags/wrappers) in standard bins."
+      ]
+    },
+    {
+      "category": "Paper",
+      "bin": "Recycling",
+      "instructions": ["Keep dry", "Flatten boxes", "Remove any plastic tape"],
+      "impact": "Recycling one ton of paper saves 17 trees and 7,000 gallons of water.",
+      "warnings": [
+        "Do not recycle food-soiled paper (e.g., greasy pizza boxes)."
+      ]
+    }
+  ]
+}
