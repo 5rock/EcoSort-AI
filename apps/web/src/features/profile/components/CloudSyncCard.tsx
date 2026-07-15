@@ -1,14 +1,19 @@
 import { useTranslation } from 'react-i18next';
 import { Shield } from 'lucide-react';
-import { useAuthStore } from '../../authentication/store/authStore';
+import { useAuthStore } from '../../authentication/stores/authStore';
+
+import { useState } from 'react';
 
 export default function CloudSyncCard() {
   const { t } = useTranslation();
-  const { mode, cloudSyncEnabled, setCloudSync } = useAuthStore();
-  const isGuest = mode === 'guest';
+  const { isAuthenticated, isGuest } = useAuthStore();
+  const [cloudSyncEnabled, setCloudSync] = useState(false);
+  
+  // Cloud sync requires a registered user
+  const canSync = isAuthenticated && !isGuest;
 
   const handleToggle = () => {
-    if (!isGuest) {
+    if (canSync) {
       setCloudSync(!cloudSyncEnabled);
     }
   };

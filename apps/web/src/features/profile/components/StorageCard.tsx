@@ -1,13 +1,19 @@
 import { useTranslation } from 'react-i18next';
 import { Database } from 'lucide-react';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '../../../offline/db';
+import { historyRepository } from '../../../offline/repositories/historyRepository';
 import { useEffect, useState } from 'react';
 
 export default function StorageCard() {
   const { t } = useTranslation();
-  const scansCount = useLiveQuery(() => db.scans.count()) || 0;
-  const scans = useLiveQuery(() => db.scans.toArray()) || [];
+  const [scansCount, setScansCount] = useState(0);
+  const [scans, setScans] = useState<any[]>([]);
+  
+  useEffect(() => {
+    historyRepository.getScansByUser().then(data => {
+      setScans(data);
+      setScansCount(data.length);
+    });
+  }, []);
   const [storageEstimate, setStorageEstimate] = useState<string>('0 MB');
 
   useEffect(() => {

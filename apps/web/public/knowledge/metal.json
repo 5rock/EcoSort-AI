@@ -1,0 +1,20 @@
+{
+  "category": "Metal",
+  "ecoScoreBase": 98,
+  "description": "Aluminum and steel cans, foils, and containers.",
+  "preparation": [
+    "Empty and rinse",
+    "Do not crush aluminum cans (they can be mis-sorted as paper in some facilities)",
+    "Ball up clean aluminum foil"
+  ],
+  "commonMistakes": [
+    "Including scrap metal, hangers, or electronics",
+    "Recycling dirty aluminum foil",
+    "Leaving hazardous chemicals in metal containers"
+  ],
+  "facts": [
+    "Aluminum can be recycled indefinitely without losing its properties.",
+    "Recycling aluminum saves 95% of the energy required to produce it from raw bauxite ore.",
+    "An aluminum can recycled today will be back on a store shelf in as little as 60 days."
+  ]
+}

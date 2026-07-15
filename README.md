@@ -88,9 +88,16 @@ EcoSort AI intelligently analyzes the camera feed for **Brightness** and **Lapla
 
 ---
 
-## 📐 Architecture Overview
+## 📐 Documentation
 
-Please see the [ARCHITECTURE.md](ARCHITECTURE.md) file for a detailed breakdown of the Data Flow, State Management, and AI Pipeline.
+EcoSort AI features comprehensive documentation covering its entire architecture and design. Please see the [docs/](docs/) directory for detailed breakdowns:
+- [Architecture](docs/architecture.md)
+- [Authentication](docs/authentication.md)
+- [AI Pipeline](docs/ai-pipeline.md)
+- [Offline Database](docs/offline.md)
+- [Deployment](docs/deployment.md)
+- [Testing](docs/testing.md)
+- [Roadmap](docs/roadmap.md)
 
 ---
 

@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Home, Camera, History, User } from 'lucide-react';
+import { Home, Camera, User, Activity } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 
 export default function Layout() {
@@ -8,7 +8,7 @@ export default function Layout() {
   const navItems = [
     { path: '/', icon: Home, label: 'Home' },
     { path: '/scan', icon: Camera, label: 'Scan' },
-    { path: '/history', icon: History, label: 'History' },
+    { path: '/history', icon: Activity, label: 'Dashboard' },
     { path: '/profile', icon: User, label: 'Profile' }
   ];
 

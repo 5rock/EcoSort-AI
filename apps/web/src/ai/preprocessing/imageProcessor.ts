@@ -4,7 +4,7 @@ import * as ort from 'onnxruntime-web';
 const TARGET_WIDTH = 224;
 const TARGET_HEIGHT = 224;
 
-export async function processImage(imageSrc: string): Promise<ort.Tensor> {
+export async function processImage(imageSrc: string): Promise<{ tensor: ort.Tensor, warnings: string[] }> {
     const response = await fetch(imageSrc);
     const blob = await response.blob();
     const bitmap = await createImageBitmap(blob);
@@ -21,18 +21,19 @@ export async function processImage(imageSrc: string): Promise<ort.Tensor> {
     ctx.drawImage(bitmap, x, y, bitmap.width, bitmap.height, 0, 0, TARGET_WIDTH, TARGET_HEIGHT);
     const imageData = ctx.getImageData(0, 0, TARGET_WIDTH, TARGET_HEIGHT);
 
-    // Phase 5: Scan Quality Check
+    // Phase 11: Quality Gate
     const brightness = calculateBrightness(imageData);
     const blurVariance = calculateBlur(imageData, TARGET_WIDTH, TARGET_HEIGHT);
     
     console.log(`Scan Quality -> Brightness: ${brightness.toFixed(2)}, Blur Variance: ${blurVariance.toFixed(2)}`);
 
-    if (brightness < 30) throw new Error('QUALITY_ERROR: IMAGE_TOO_DARK');
-    if (brightness > 240) throw new Error('QUALITY_ERROR: IMAGE_TOO_BRIGHT');
-    if (blurVariance < 15) throw new Error('QUALITY_ERROR: IMAGE_TOO_BLURRY');
+    const warnings: string[] = [];
+    if (brightness < 30) warnings.push('IMAGE_TOO_DARK');
+    if (brightness > 240) warnings.push('IMAGE_TOO_BRIGHT');
+    if (blurVariance < 15) warnings.push('IMAGE_TOO_BLURRY');
 
     const tensor = imageDataToTensor(imageData);
-    return tensor;
+    return { tensor, warnings };
 }
 
 function calculateBrightness(imageData: ImageData): number {

@@ -1,0 +1,20 @@
+{
+  "category": "Paper",
+  "ecoScoreBase": 90,
+  "description": "Material manufactured in thin sheets from the pulp of wood or other fibrous substances.",
+  "preparation": [
+    "Ensure paper is completely dry",
+    "Remove any plastic wrapping or non-paper liners",
+    "Flatten cardboard boxes"
+  ],
+  "commonMistakes": [
+    "Recycling greasy pizza boxes",
+    "Recycling paper towels, tissues, or napkins (they are too short-fibered)",
+    "Recycling shredded paper loosely (it clogs machinery)"
+  ],
+  "facts": [
+    "Recycling one ton of paper saves 17 trees and 7,000 gallons of water.",
+    "Paper can typically be recycled 5 to 7 times before the fibers become too short.",
+    "Producing recycled paper requires about 60% of the energy used to make paper from virgin wood pulp."
+  ]
+}

@@ -5,9 +5,11 @@ import AIStatusPanel from '../components/AIStatusPanel';
 import { aiEngine } from '../../../ai/engine/aiEngine';
 import { processWasteIntelligence } from '../../../ai/engine/wasteIntelligence';
 import type { WasteIntelligenceResult } from '@ecosort/types';
-import { db } from '../../../offline/db';
+import { historyRepository } from '../../../offline/repositories/historyRepository';
+import { gamificationRepository } from '../../../offline/repositories/gamificationRepository';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSettingsStore } from '../../../stores/settingsStore';
+import { useAuthStore } from '../../authentication/stores/authStore';
 import { CheckCircle2, Cpu, AlertCircle, RefreshCw, XCircle } from 'lucide-react';
 
 type ScanStage = 'camera' | 'preview' | 'analyzing' | 'result' | 'error';
@@ -22,6 +24,7 @@ export default function Scan() {
   const [errorMessage, setErrorMessage] = useState<string>('');
   
   const { region, imageStorage } = useSettingsStore();
+  const { user } = useAuthStore();
 
   useEffect(() => {
     aiEngine.init().then(() => setModelReady(true)).catch(() => setModelReady(false));
@@ -113,6 +116,7 @@ export default function Scan() {
 
   const handleSave = async () => {
     if (!result || isSaved) return;
+    const userId = user?.id;
     
     let thumbnail: string | undefined;
     let originalImage: string | undefined;
@@ -125,7 +129,7 @@ export default function Scan() {
       originalImage = image!;
     }
 
-    await db.scans.add({
+    await historyRepository.addScan({
       id: crypto.randomUUID(),
       timestamp: Date.now(),
       category: result.category,
@@ -136,12 +140,22 @@ export default function Scan() {
       instructions: result.instructions,
       impact: result.impact,
       warnings: result.warnings,
+      ecoScore: result.ecoScore,
+      carbonSaved: result.impactMetrics?.carbon_saved_g,
+      waterSaved: result.impactMetrics?.water_saved_l,
+      energySaved: result.impactMetrics?.energy_saved_kwh,
+      xpEarned: result.xpEarned,
       thumbnail,
       originalImage,
       modelVersion: result.metrics?.modelVersion,
       processingTime: result.metrics?.inferenceTimeMs,
-      device: result.metrics?.backend
+      device: result.metrics?.backend,
+      userId
     });
+
+    if (userId && result.xpEarned) {
+      await gamificationRepository.addXP(userId, result.xpEarned);
+    }
 
     setIsSaved(true);
   };

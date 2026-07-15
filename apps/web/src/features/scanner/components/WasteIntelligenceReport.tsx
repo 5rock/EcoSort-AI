@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Share2, RefreshCcw, Check, Trash2, Leaf, AlertTriangle, Info, ShieldCheck, Download } from 'lucide-react';
+import { Share2, RefreshCcw, Check, AlertTriangle, Info, ShieldCheck, Download, Star, Cloud, Droplets, Zap, Volume2, Lightbulb } from 'lucide-react';
 import type { WasteIntelligenceResult } from '@ecosort/types';
 
 interface Props {
@@ -12,6 +12,15 @@ interface Props {
 }
 
 export default function WasteIntelligenceReport({ result, imageSrc, onScanAgain, onSave, isSaved, onManualOverride }: Props) {
+  const playVoice = () => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel(); // stop previous
+      const text = `This is ${result.category}. ${result.preparationSteps?.[0] || 'Please recycle properly.'}`;
+      const utterance = new SpeechSynthesisUtterance(text);
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -27,23 +36,24 @@ export default function WasteIntelligenceReport({ result, imageSrc, onScanAgain,
         />
         <div className="absolute bottom-4 left-4 right-4 flex justify-between items-end">
           <div className="bg-black/60 backdrop-blur-md text-white px-4 py-2 rounded-2xl shadow-lg border border-white/20">
-            <h2 className="text-2xl font-black">{result.category}</h2>
+            <h2 className="text-2xl font-black capitalize">{result.category}</h2>
             <div className="flex items-center gap-2 mt-1 opacity-90">
-              <span className="text-sm font-medium">Recognition Quality</span>
-              <div className="flex gap-0.5">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <svg key={star} className={`w-3 h-3 ${star <= (result.level === 'High' ? 5 : result.level === 'Medium' ? 3 : 1) ? 'text-yellow-400 fill-current' : 'text-gray-400'}`} viewBox="0 0 20 20">
-                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                  </svg>
-                ))}
-              </div>
+              <span className="text-sm font-medium">Bin: {result.bin}</span>
             </div>
           </div>
+          
+          <button 
+            onClick={playVoice}
+            className="bg-primary hover:bg-primary-dark text-white p-3 rounded-full shadow-lg border border-white/20 backdrop-blur-md transition-transform active:scale-95"
+            title="Listen"
+          >
+            <Volume2 size={24} />
+          </button>
         </div>
       </div>
 
       {/* Low Confidence State */}
-      {result.category === 'Uncertain' ? (
+      {result.category === 'Possible Matches' || result.category === 'Unknown' ? (
         <div className="bg-yellow-50 dark:bg-yellow-900/10 p-6 rounded-3xl border border-yellow-200 dark:border-yellow-900/30 shadow-sm">
           <h3 className="text-lg font-black text-yellow-800 dark:text-yellow-500 mb-3 flex items-center gap-2">
             <AlertTriangle size={20} /> We're not fully confident.
@@ -53,15 +63,15 @@ export default function WasteIntelligenceReport({ result, imageSrc, onScanAgain,
           </p>
           
           <div className="space-y-2 mb-6">
-            {result.rawPredictions && result.rawPredictions.slice(0, 4).map((pred, idx) => (
+            {result.possibleMatches && result.possibleMatches.map((match, idx) => (
               <button 
                 key={idx}
-                onClick={() => onManualOverride && onManualOverride(pred.className)}
+                onClick={() => onManualOverride && onManualOverride(match)}
                 className="w-full text-left bg-white dark:bg-yellow-900/20 hover:bg-yellow-100 dark:hover:bg-yellow-900/40 p-3 rounded-xl border border-yellow-200 dark:border-yellow-700/50 flex justify-between items-center transition-colors"
               >
-                <span className="font-bold text-yellow-900 dark:text-yellow-100 capitalize">{pred.className.replace(/_/g, ' ')}</span>
+                <span className="font-bold text-yellow-900 dark:text-yellow-100 capitalize">{match.replace(/_/g, ' ')}</span>
                 <span className="text-sm font-semibold text-yellow-700 dark:text-yellow-500">
-                  {Math.round(pred.prob * 100)}% Match
+                  Select
                 </span>
               </button>
             ))}
@@ -73,85 +83,113 @@ export default function WasteIntelligenceReport({ result, imageSrc, onScanAgain,
         </div>
       ) : (
         <>
-          {/* Disposal Recommendation */}
-          <div className="bg-blue-50 dark:bg-blue-900/20 p-5 rounded-3xl border border-blue-100 dark:border-blue-800/50 flex items-center justify-between shadow-elevation-1">
-            <div>
-              <p className="text-sm font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1">Dispose Here</p>
-              <p className="text-xl font-extrabold text-blue-900 dark:text-blue-100 flex items-center gap-2">
-                <Trash2 size={24} /> {result.bin}
-              </p>
+          {/* Quality Warnings (Phase 11) */}
+          {result.metrics?.warnings && result.metrics.warnings.length > 0 && (
+            <div className="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-2xl border border-orange-200 dark:border-orange-800 shadow-sm flex flex-col gap-2 mb-2">
+              <div className="flex items-center gap-2 text-orange-800 dark:text-orange-400 font-bold">
+                <AlertTriangle size={18} />
+                <span>Image Quality Warning</span>
+              </div>
+              <ul className="list-disc list-inside text-sm text-orange-700 dark:text-orange-300">
+                {result.metrics.warnings.map((w: string, i: number) => (
+                  <li key={i}>{w === 'IMAGE_TOO_DARK' ? 'Image is very dark.' : w === 'IMAGE_TOO_BRIGHT' ? 'Image is very bright.' : w === 'IMAGE_TOO_BLURRY' ? 'Image is blurry.' : w}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          
+          {/* Scan Summary Card (RC2) */}
+          <div className="bg-gradient-to-br from-green-50 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/20 p-6 rounded-3xl border border-green-200 dark:border-green-800/50 shadow-elevation-2 relative overflow-hidden">
+            <div className="flex justify-between items-start mb-5">
+              <div>
+                <p className="text-xs font-bold text-green-700 dark:text-green-400 uppercase tracking-wider mb-1">EcoScore</p>
+                <div className="flex items-end gap-2">
+                  <span className="text-5xl font-black text-green-900 dark:text-green-100 leading-none">{result.ecoScore}</span>
+                  <span className="text-lg font-bold text-green-600 dark:text-green-500 mb-1">/ 100</span>
+                </div>
+              </div>
+              <div className="bg-white dark:bg-gray-800 px-3 py-1.5 rounded-full shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-1.5">
+                <Star size={16} className="text-yellow-500 fill-yellow-500" />
+                <span className="text-sm font-black text-gray-800 dark:text-gray-200">+{result.xpEarned} XP</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3">
+              <div className="bg-white/60 dark:bg-gray-800/60 p-3 rounded-2xl flex flex-col items-center justify-center text-center backdrop-blur-sm border border-white/40 dark:border-gray-700/50">
+                <Cloud size={22} className="text-gray-600 dark:text-gray-400 mb-1" />
+                <span className="text-xl font-bold text-gray-900 dark:text-gray-100">{result.impactMetrics?.carbon_saved_g}g</span>
+                <span className="text-[10px] font-bold text-gray-500 uppercase mt-0.5">CO₂ Saved</span>
+              </div>
+              <div className="bg-white/60 dark:bg-gray-800/60 p-3 rounded-2xl flex flex-col items-center justify-center text-center backdrop-blur-sm border border-white/40 dark:border-gray-700/50">
+                <Droplets size={22} className="text-blue-500 mb-1" />
+                <span className="text-xl font-bold text-gray-900 dark:text-gray-100">{result.impactMetrics?.water_saved_l}L</span>
+                <span className="text-[10px] font-bold text-gray-500 uppercase mt-0.5">Water Saved</span>
+              </div>
+              <div className="bg-white/60 dark:bg-gray-800/60 p-3 rounded-2xl flex flex-col items-center justify-center text-center backdrop-blur-sm border border-white/40 dark:border-gray-700/50">
+                <Zap size={22} className="text-yellow-500 mb-1" />
+                <span className="text-xl font-bold text-gray-900 dark:text-gray-100">{result.impactMetrics?.energy_saved_kwh}</span>
+                <span className="text-[10px] font-bold text-gray-500 uppercase mt-0.5">kWh Saved</span>
+              </div>
             </div>
           </div>
 
-          {/* Preparation Instructions */}
-          {result.instructions && result.instructions.length > 0 && (
+          {/* Smart Preparation Guide */}
+          {result.preparationSteps && result.preparationSteps.length > 0 && (
             <div className="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-elevation-1 border border-gray-100 dark:border-gray-700">
-              <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-3 flex items-center gap-2">
-                <Check size={16} className="text-green-500" /> Preparation
+              <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2">
+                <Check size={18} className="text-green-500" /> Before Recycling
               </h3>
               <ul className="space-y-3">
-                {result.instructions.map((inst, idx) => (
-                  <li key={idx} className="flex items-start gap-3 text-gray-800 dark:text-gray-200 font-medium">
-                    <div className="mt-0.5 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full p-1">
-                      <Check size={12} strokeWidth={3} />
+                {result.preparationSteps.map((inst, idx) => (
+                  <li key={idx} className="flex items-start gap-3 text-gray-800 dark:text-gray-200 font-medium bg-gray-50 dark:bg-gray-800/50 p-3 rounded-xl">
+                    <div className="mt-0.5 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-full p-1 shrink-0">
+                      <Check size={14} strokeWidth={3} />
                     </div>
-                    {inst}
+                    <span>{inst}</span>
                   </li>
                 ))}
               </ul>
             </div>
           )}
 
-          {/* Impact & Warnings */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {result.impact && (
-              <div className="bg-green-50 dark:bg-green-900/10 p-5 rounded-3xl border border-green-100 dark:border-green-900/30 shadow-sm">
-                <h3 className="text-sm font-bold text-green-700 dark:text-green-400 uppercase tracking-wider mb-2 flex items-center gap-2">
-                  <Leaf size={16} /> Environmental Impact
-                </h3>
-                <p className="text-sm text-green-900 dark:text-green-100 font-medium leading-relaxed">{result.impact}</p>
-              </div>
-            )}
-
-            {result.warnings && (
-              <div className="bg-orange-50 dark:bg-orange-900/10 p-5 rounded-3xl border border-orange-100 dark:border-orange-900/30 shadow-sm">
-                <h3 className="text-sm font-bold text-orange-700 dark:text-orange-400 uppercase tracking-wider mb-2 flex items-center gap-2">
-                  <AlertTriangle size={16} /> Common Mistakes
-                </h3>
-                <p className="text-sm text-orange-900 dark:text-orange-100 font-medium leading-relaxed">{result.warnings}</p>
-              </div>
-            )}
-          </div>
+          {/* Did You Know (Facts) */}
+          {result.facts && result.facts.length > 0 && (
+            <div className="bg-blue-50 dark:bg-blue-900/10 p-5 rounded-3xl border border-blue-100 dark:border-blue-900/30 shadow-sm">
+              <h3 className="text-sm font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider mb-2 flex items-center gap-2">
+                <Lightbulb size={16} /> Did You Know?
+              </h3>
+              <p className="text-sm text-blue-900 dark:text-blue-100 font-medium leading-relaxed italic">
+                "{result.facts[Math.floor(Math.random() * result.facts.length)]}"
+              </p>
+            </div>
+          )}
 
           {/* AI Explanation (Metadata) */}
           <div className="bg-gray-50 dark:bg-gray-800/50 p-5 rounded-3xl border border-gray-100 dark:border-gray-700">
             <h3 className="text-sm font-bold text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2">
-              <Info size={16} /> AI Explanation
+              <Info size={16} /> AI Decision
             </h3>
             
             <div className="grid grid-cols-2 gap-4 mb-4">
               <div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold mb-1">Model Confidence</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold mb-1">Detected Confidence</p>
                 <p className="text-lg font-black text-gray-800 dark:text-gray-200">
-                  {result.modelConfidence ? Math.round(result.modelConfidence * 100) : '--'}%
+                  {Math.round(result.confidence * 100)}%
                 </p>
               </div>
               <div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold mb-1">Waste Confidence</p>
+                <p className="text-xs text-gray-500 dark:text-gray-400 uppercase font-bold mb-1">Model Layer</p>
                 <p className="text-lg font-black text-gray-800 dark:text-gray-200">
-                  {Math.round(result.confidence * 100)}%
+                  {result.modelConfidence ? Math.round(result.modelConfidence * 100) : '--'}%
                 </p>
               </div>
             </div>
 
             {result.metrics && (
               <>
-                <p className="text-xs text-gray-500 dark:text-gray-400 mb-3 font-medium">
-                  Processed locally on-device in {result.metrics.inferenceTimeMs}ms.
-                </p>
                 <div className="flex gap-2 flex-wrap">
                   <span className="bg-white dark:bg-gray-700 px-3 py-1 rounded-full text-xs font-bold text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600 shadow-sm">
-                    {result.metrics.modelVersion}
+                    Inference: {result.metrics.inferenceTimeMs}ms
                   </span>
                   <span className="bg-white dark:bg-gray-700 px-3 py-1 rounded-full text-xs font-bold text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-600 shadow-sm uppercase">
                     {result.metrics.backend}

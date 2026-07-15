@@ -1,0 +1,20 @@
+{
+  "category": "Organic",
+  "ecoScoreBase": 100,
+  "description": "Food scraps, yard waste, and other biodegradable materials.",
+  "preparation": [
+    "Remove any produce stickers",
+    "Ensure no plastic, glass, or metal is mixed in",
+    "Cut into smaller pieces for faster composting"
+  ],
+  "commonMistakes": [
+    "Composting meat, dairy, or oils (unless industrial composting)",
+    "Throwing organic waste in regular plastic bags",
+    "Including treated wood or pet waste"
+  ],
+  "facts": [
+    "Composting organic waste enriches soil and reduces the need for chemical fertilizers.",
+    "When organic matter breaks down in landfills, it releases methane, a potent greenhouse gas.",
+    "Nearly 30% of what we throw away is food scraps and yard waste."
+  ]
+}

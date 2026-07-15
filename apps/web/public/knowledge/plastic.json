@@ -1,0 +1,21 @@
+{
+  "category": "Plastic",
+  "ecoScoreBase": 85,
+  "description": "Synthetic materials made from polymers, commonly used in packaging.",
+  "preparation": [
+    "Empty all contents completely",
+    "Rinse with water",
+    "Remove non-plastic caps or pumps",
+    "Crush to save space"
+  ],
+  "commonMistakes": [
+    "Leaving food residue",
+    "Including plastic bags or film (which tangle in sorting machines)",
+    "Throwing in black plastic (often undetectable by optical scanners)"
+  ],
+  "facts": [
+    "A recycled plastic bottle can be turned into clothing, furniture, or another bottle.",
+    "It takes up to 500 years for some plastics to decompose in a landfill.",
+    "Recycling a single plastic bottle saves enough energy to power a 60W light bulb for 6 hours."
+  ]
+}

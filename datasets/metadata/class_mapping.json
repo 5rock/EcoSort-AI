@@ -1,0 +1,8 @@
+{
+  "MobileNetV2": {
+    "inputSize": [224, 224, 3],
+    "normalization": "ImageNet",
+    "classes": 8,
+    "version": "1.0.0"
+  }
+}

@@ -1,20 +1,18 @@
-export type AuthMode = 'guest' | 'registered' | null;
+export type UserRole = 'guest' | 'user' | 'admin';
 
 export interface User {
   id: string;
   email?: string;
-  isGuest: boolean;
+  name?: string;
+  role: UserRole;
+  createdAt: string;
+  lastLoginAt: string;
 }
 
 export interface AuthState {
-  mode: AuthMode;
   user: User | null;
-  token: string | null;
-  cloudSyncEnabled: boolean;
-  
-  // Actions
-  setGuestSession: (guestId: string) => void;
-  setRegisteredSession: (user: User, token: string) => void;
-  setCloudSync: (enabled: boolean) => void;
-  clearSession: () => void;
+  isAuthenticated: boolean;
+  isGuest: boolean;
+  isLoading: boolean;
+  error: string | null;
 }

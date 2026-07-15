@@ -9,7 +9,13 @@ export interface ScanHistoryRecord {
   bin: string;
   synced: boolean;
   
-  // New fields from redesign
+  // New RC2 fields
+  ecoScore?: number;
+  carbonSaved?: number;
+  waterSaved?: number;
+  energySaved?: number;
+  xpEarned?: number;
+  
   thumbnail?: string; // base64 jpeg
   originalImage?: string; // base64
   instructions?: string[];
@@ -18,6 +24,7 @@ export interface ScanHistoryRecord {
   modelVersion?: string;
   processingTime?: number; // ms
   device?: string; // backend used e.g. WebGPU
+  userId?: string; // To differentiate between guest and authenticated users
 }
 
 export interface UserRecord {
@@ -28,22 +35,24 @@ export interface UserRecord {
   createdAt: number;
 }
 
-const db = new Dexie('EcoSortDB') as Dexie & {
+export interface GamificationRecord {
+  userId: string;
+  xp: number;
+  level: number;
+  badges: string[];
+}
+
+// Renamed DB to force a clean wipe for RC2
+const db = new Dexie('EcoSortDB_RC2') as Dexie & {
   scans: EntityTable<ScanHistoryRecord, 'id'>;
   users: EntityTable<UserRecord, 'id'>;
+  gamification: EntityTable<GamificationRecord, 'userId'>;
 };
 
-db.version(2).stores({
-  scans: 'id, timestamp, category, region, synced' 
-});
-
-db.version(3).stores({
-  users: 'id, email' // We only index fields we query by
-});
-
-db.version(4).upgrade(() => {
-  // Version 4 adds 'salt' to users, but Dexie doesn't require schema changes for unindexed properties.
-  // We just bump the version to document the change and run any migrations if needed.
+db.version(1).stores({
+  scans: 'id, timestamp, category, region, synced, userId',
+  users: 'id, email',
+  gamification: 'userId'
 });
 
 export { db };

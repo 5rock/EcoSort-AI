@@ -1,0 +1,20 @@
+{
+  "category": "Hazardous",
+  "ecoScoreBase": 10,
+  "description": "Paints, chemicals, motor oil, fluorescent tubes, and medical waste.",
+  "preparation": [
+    "Keep in original, clearly labeled containers",
+    "Never mix different hazardous materials",
+    "Do NOT place in ANY household bins (Trash or Recycling)"
+  ],
+  "commonMistakes": [
+    "Pouring chemicals down the drain",
+    "Throwing medical sharps in the trash",
+    "Leaving containers open"
+  ],
+  "facts": [
+    "Improper disposal of hazardous waste can contaminate drinking water supplies.",
+    "Many municipalities have designated drop-off days for household hazardous waste.",
+    "Fluorescent bulbs contain trace amounts of mercury and must be handled carefully."
+  ]
+}

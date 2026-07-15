@@ -1,0 +1,20 @@
+{
+  "category": "E-Waste",
+  "ecoScoreBase": 40,
+  "description": "Discarded electronic appliances, mobile phones, computers, and batteries.",
+  "preparation": [
+    "Remove batteries if possible (recycle separately)",
+    "Wipe all personal data from devices",
+    "Do NOT place in standard recycling bins"
+  ],
+  "commonMistakes": [
+    "Throwing batteries in the trash (can cause fires)",
+    "Mixing e-waste with regular recyclables",
+    "Not checking for manufacturer take-back programs"
+  ],
+  "facts": [
+    "E-waste contains valuable materials like gold, silver, copper, and palladium.",
+    "It also contains toxic substances like lead and mercury that can leach into soil.",
+    "Only a small percentage of global e-waste is properly collected and recycled."
+  ]
+}

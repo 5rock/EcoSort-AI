@@ -1,0 +1,42 @@
+{
+  "plastic": {
+    "displayName": "Plastic",
+    "bin": "Recycling Bin",
+    "impact": "Reduces ocean pollution and saves crude oil."
+  },
+  "glass": {
+    "displayName": "Glass",
+    "bin": "Glass Recycling Bin",
+    "impact": "Can be infinitely recycled without loss of quality."
+  },
+  "paper": {
+    "displayName": "Paper/Cardboard",
+    "bin": "Paper Recycling Bin",
+    "impact": "Saves trees and reduces landfill mass."
+  },
+  "metal": {
+    "displayName": "Metal",
+    "bin": "Metal Recycling Bin",
+    "impact": "Highly energy efficient to recycle compared to mining."
+  },
+  "organic": {
+    "displayName": "Organic/Compost",
+    "bin": "Compost Bin",
+    "impact": "Creates nutrient-rich soil and reduces methane emissions."
+  },
+  "ewaste": {
+    "displayName": "Electronic Waste",
+    "bin": "E-Waste Drop-off",
+    "impact": "Recovers precious metals and prevents toxic chemical leaks."
+  },
+  "hazardous": {
+    "displayName": "Hazardous Material",
+    "bin": "Specialized Disposal",
+    "impact": "Prevents soil and water contamination."
+  },
+  "mixed": {
+    "displayName": "Mixed/General Waste",
+    "bin": "Trash Bin",
+    "impact": "Typically ends up in landfills. Aim to separate if possible."
+  }
+}

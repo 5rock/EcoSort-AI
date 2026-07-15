@@ -3,3 +3,13 @@ node_modules/
 dist/
 build/
 .DS_Store
+.vscode/
+__pycache__/
+*.py[cod]
+
+# Local Python and ML training artifacts
+.venv/
+ai-training/.venv/
+ai-training/datasets/
+ai-training/logs/
+ai-training/models/checkpoints/

@@ -1,6 +1,6 @@
 import { UserCircle, CheckCircle2, LogOut, Trash2 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
-import { useAuthStore } from '../../authentication/store/authStore';
+import { useAuthStore } from '../../authentication/stores/authStore';
 import { authService } from '../../authentication/services/authService';
 import { guestService } from '../../authentication/services/guestService';
 import { useNavigate } from 'react-router-dom';
@@ -16,11 +16,11 @@ import PrivacyDashboard from '../components/PrivacyDashboard';
 
 export default function Profile() {
   const { t } = useTranslation();
-  const { user, mode } = useAuthStore();
+  const { user, isGuest } = useAuthStore();
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    if (mode === 'guest') {
+    if (isGuest) {
       if (window.confirm('Are you sure? This will delete all your local scan history and settings.')) {
         await guestService.logoutGuest();
         navigate('/welcome');
@@ -41,9 +41,9 @@ export default function Profile() {
         </div>
         <div className="flex-grow">
           <h2 className="text-2xl font-extrabold text-gray-900 dark:text-gray-100">
-            {mode === 'guest' ? t('profile.guest_user') : user?.email}
+            {isGuest ? t('profile.guest_user') : user?.email}
           </h2>
-          {mode === 'guest' && user?.id && (
+          {isGuest && user?.id && (
             <p className="text-xs font-bold text-gray-400 mt-0.5">{user.id}</p>
           )}
           <div className="flex flex-col gap-1 mt-1">
@@ -56,9 +56,9 @@ export default function Profile() {
         <button 
           onClick={handleLogout}
           className="p-3 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-full hover:bg-red-50 hover:text-red-500 transition-colors shadow-sm"
-          title={mode === 'guest' ? 'Clear Data & Start Fresh' : 'Sign Out'}
+          title={isGuest ? 'Clear Data & Start Fresh' : 'Sign Out'}
         >
-          {mode === 'guest' ? <Trash2 size={20} /> : <LogOut size={20} />}
+          {isGuest ? <Trash2 size={20} /> : <LogOut size={20} />}
         </button>
       </div>
 

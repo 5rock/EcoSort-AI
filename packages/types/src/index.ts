@@ -16,6 +16,7 @@ export interface InferenceResponse {
     inferenceTimeMs: number;
     backend: string;
     modelVersion: string;
+    warnings?: string[];
   };
 }
 
@@ -29,9 +30,23 @@ export interface WasteIntelligenceResult {
   instructions: string[];
   impact: string;
   warnings: string;
+  
+  // New RC2 fields
+  ecoScore?: number;
+  preparationSteps?: string[];
+  facts?: string[];
+  impactMetrics?: {
+    carbon_saved_g: number;
+    water_saved_l: number;
+    energy_saved_kwh: number;
+  };
+  xpEarned?: number;
+  possibleMatches?: string[];
+  
   metrics?: {
     inferenceTimeMs: number;
     backend: string;
     modelVersion: string;
+    warnings?: string[];
   };
 }

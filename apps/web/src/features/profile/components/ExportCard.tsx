@@ -1,13 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { FileJson, FileText, ChevronRight } from 'lucide-react';
-import { db } from '../../../offline/db';
+import { historyRepository } from '../../../offline/repositories/historyRepository';
 import { motion } from 'framer-motion';
 
 export default function ExportCard() {
   const { t } = useTranslation();
 
   const handleExportJSON = async () => {
-    const data = await db.scans.toArray();
+    const data = await historyRepository.getScansByUser();
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -18,7 +18,7 @@ export default function ExportCard() {
   };
 
   const handleExportCSV = async () => {
-    const data = await db.scans.toArray();
+    const data = await historyRepository.getScansByUser();
     if (data.length === 0) return;
     const headers = Object.keys(data[0]).join(',');
     const rows = data.map(obj => Object.values(obj).map(v => typeof v === 'string' ? `"${v}"` : v).join(',')).join('\n');

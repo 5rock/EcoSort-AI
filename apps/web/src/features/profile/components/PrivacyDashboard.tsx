@@ -1,17 +1,22 @@
 import { useTranslation } from 'react-i18next';
 import { ShieldCheck, Trash2 } from 'lucide-react';
-import { useLiveQuery } from 'dexie-react-hooks';
-import { db } from '../../../offline/db';
+import { historyRepository } from '../../../offline/repositories/historyRepository';
+import { useEffect, useState } from 'react';
 
 export default function PrivacyDashboard() {
   const { t } = useTranslation();
-  const scans = useLiveQuery(() => db.scans.toArray()) || [];
+  const [scans, setScans] = useState<any[]>([]);
+  
+  useEffect(() => {
+    historyRepository.getScansByUser().then(setScans);
+  }, []);
+
   const imagesCount = scans.filter(s => s.thumbnail || s.originalImage).length;
 
   const handleDeleteAll = async () => {
-    if (confirm(t('profile.delete_history') + '?')) {
-      await db.scans.clear();
-      alert('History cleared successfully.');
+    if (confirm(t('profile.privacy.confirmDelete'))) {
+      await historyRepository.clearUserScans();
+      setScans([]);
     }
   };
 
